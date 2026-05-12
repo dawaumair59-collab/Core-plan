@@ -11,6 +11,8 @@ export interface Database {
           slug: string
           description: string | null
           logo_url: string | null
+          banner_url: string | null
+          theme: string
           address: string | null
           phone: string | null
           email: string | null
@@ -27,6 +29,8 @@ export interface Database {
           slug: string
           description?: string | null
           logo_url?: string | null
+          banner_url?: string | null
+          theme?: string
           address?: string | null
           phone?: string | null
           email?: string | null
@@ -43,6 +47,8 @@ export interface Database {
           slug?: string
           description?: string | null
           logo_url?: string | null
+          banner_url?: string | null
+          theme?: string
           address?: string | null
           phone?: string | null
           email?: string | null

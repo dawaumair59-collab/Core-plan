@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS public.restaurants (
   slug            TEXT NOT NULL UNIQUE,
   description     TEXT,
   logo_url        TEXT,
+  banner_url      TEXT,
+  theme           TEXT NOT NULL DEFAULT 'ember',
   address         TEXT,
   phone           TEXT,
   email           TEXT,
@@ -23,6 +25,26 @@ CREATE TABLE IF NOT EXISTS public.restaurants (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Supabase Storage bucket for restaurant logos and banners
+-- Run this AFTER creating the table, then go to Storage → restaurant-assets → make it Public
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('restaurant-assets', 'restaurant-assets', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage RLS: anyone can read, owners can upload/delete
+CREATE POLICY "storage_public_read" ON storage.objects
+  FOR SELECT USING (bucket_id = 'restaurant-assets');
+
+CREATE POLICY "storage_owner_insert" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'restaurant-assets' AND auth.role() = 'authenticated'
+  );
+
+CREATE POLICY "storage_owner_delete" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'restaurant-assets' AND auth.uid()::text = (storage.foldername(name))[1]
+  );
 
 -- ─── menu_categories ─────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.menu_categories (

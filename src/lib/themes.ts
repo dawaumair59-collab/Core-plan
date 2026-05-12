@@ -1,0 +1,113 @@
+export type ThemeId =
+  | 'ember'
+  | 'ocean'
+  | 'forest'
+  | 'midnight'
+  | 'sunset'
+  | 'minimal'
+
+export interface Theme {
+  id: ThemeId
+  name: string
+  description: string
+  primary: string
+  secondary: string
+  bg: string
+  surface: string
+  text: string
+  accent: string
+  previewBg: string
+  previewBar: string
+  previewAccent: string
+}
+
+export const THEMES: Theme[] = [
+  {
+    id: 'ember',
+    name: 'Ember',
+    description: 'Warm oranges — classic & inviting',
+    primary: '#f97316',
+    secondary: '#ea580c',
+    bg: '#0f0f0f',
+    surface: '#18181b',
+    text: '#f5f5f5',
+    accent: '#fb923c',
+    previewBg: '#0f0f0f',
+    previewBar: '#1c1917',
+    previewAccent: '#f97316',
+  },
+  {
+    id: 'ocean',
+    name: 'Ocean',
+    description: 'Cool blues — fresh & modern',
+    primary: '#3b82f6',
+    secondary: '#2563eb',
+    bg: '#0a0f1e',
+    surface: '#0f172a',
+    text: '#f0f9ff',
+    accent: '#60a5fa',
+    previewBg: '#0a0f1e',
+    previewBar: '#0f172a',
+    previewAccent: '#3b82f6',
+  },
+  {
+    id: 'forest',
+    name: 'Forest',
+    description: 'Deep greens — organic & earthy',
+    primary: '#22c55e',
+    secondary: '#16a34a',
+    bg: '#051a0e',
+    surface: '#0a2818',
+    text: '#f0fdf4',
+    accent: '#4ade80',
+    previewBg: '#051a0e',
+    previewBar: '#0a2818',
+    previewAccent: '#22c55e',
+  },
+  {
+    id: 'midnight',
+    name: 'Midnight',
+    description: 'Rich purples — premium & bold',
+    primary: '#a855f7',
+    secondary: '#9333ea',
+    bg: '#0d0514',
+    surface: '#180a27',
+    text: '#faf5ff',
+    accent: '#c084fc',
+    previewBg: '#0d0514',
+    previewBar: '#180a27',
+    previewAccent: '#a855f7',
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset',
+    description: 'Warm pinks — vibrant & playful',
+    primary: '#f43f5e',
+    secondary: '#e11d48',
+    bg: '#180a10',
+    surface: '#1f0d17',
+    text: '#fff1f2',
+    accent: '#fb7185',
+    previewBg: '#180a10',
+    previewBar: '#1f0d17',
+    previewAccent: '#f43f5e',
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Clean whites — simple & timeless',
+    primary: '#18181b',
+    secondary: '#27272a',
+    bg: '#ffffff',
+    surface: '#f4f4f5',
+    text: '#09090b',
+    accent: '#52525b',
+    previewBg: '#f9f9f9',
+    previewBar: '#ffffff',
+    previewAccent: '#18181b',
+  },
+]
+
+export function getTheme(id: ThemeId): Theme {
+  return THEMES.find((t) => t.id === id) ?? THEMES[0]
+}

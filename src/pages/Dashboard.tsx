@@ -12,7 +12,7 @@ import type { Restaurant, MenuCategory, MenuItem, Video } from '../types/databas
 
 type Tab = 'restaurants' | 'menu' | 'videos' | 'analytics' | 'subscriptions'
 
-export default function Dashboard() {
+export default function Dashboard({ onNewRestaurant }: { onNewRestaurant?: () => void }) {
   const [tab, setTab] = useState<Tab>('restaurants')
   const [connected, setConnected] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -78,7 +78,7 @@ export default function Dashboard() {
       </div>
 
       {/* Tab content */}
-      {tab === 'restaurants' && <RestaurantsTab />}
+      {tab === 'restaurants' && <RestaurantsTab onNewRestaurant={onNewRestaurant} />}
       {tab === 'menu' && <MenuTab />}
       {tab === 'videos' && <VideosTab />}
       {tab === 'analytics' && <AnalyticsTab />}
@@ -89,7 +89,7 @@ export default function Dashboard() {
 
 // ─── Restaurants Tab ─────────────────────────────────────────────────────────
 
-function RestaurantsTab() {
+function RestaurantsTab({ onNewRestaurant }: { onNewRestaurant?: () => void }) {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', slug: '', cuisine_type: '' })
@@ -136,35 +136,56 @@ function RestaurantsTab() {
   }
 
   return (
-    <SectionLayout title="Restaurants" description="Manage your restaurant profiles.">
-      <form onSubmit={handleCreate} className="flex flex-wrap gap-2 mb-6">
-        <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-          placeholder="Restaurant name" className="input flex-1 min-w-32" required />
-        <input value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
-          placeholder="url-slug" className="input w-36" required />
-        <input value={form.cuisine_type} onChange={e => setForm(f => ({ ...f, cuisine_type: e.target.value }))}
-          placeholder="Cuisine type" className="input w-36" />
-        <button type="submit" disabled={saving} className="btn-primary">
-          {saving ? 'Adding…' : '+ Add'}
+    <SectionLayout
+      title="Restaurants"
+      description="Manage your restaurant profiles."
+      action={onNewRestaurant && (
+        <button onClick={onNewRestaurant} className="btn-primary flex items-center gap-1.5">
+          <span>+</span> New Restaurant
         </button>
-      </form>
-
+      )}
+    >
       {err && <ErrorBanner message={err} />}
 
       {loading ? <Spinner /> : (
-        <div className="space-y-2">
-          {restaurants.length === 0 && <Empty text="No restaurants yet. Add your first one above." />}
-          {restaurants.map(r => (
-            <div key={r.id} className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3">
+        <div className="space-y-3">
+          {restaurants.length === 0 && (
+            <div className="text-center py-16 space-y-4">
+              <div className="text-5xl">🏪</div>
               <div>
-                <div className="font-medium">{r.name}</div>
-                <div className="text-xs text-zinc-500">/{r.slug} {r.cuisine_type && `· ${r.cuisine_type}`}</div>
+                <p className="font-medium text-zinc-300">No restaurants yet</p>
+                <p className="text-sm text-zinc-500 mt-1">Set up your first restaurant with the guided wizard.</p>
               </div>
-              <div className="flex items-center gap-2">
+              {onNewRestaurant && (
+                <button onClick={onNewRestaurant} className="btn-primary mx-auto inline-flex items-center gap-1.5 px-6">
+                  <span>+</span> Set up your first restaurant
+                </button>
+              )}
+            </div>
+          )}
+          {restaurants.map(r => (
+            <div key={r.id} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-700 transition-colors">
+              {/* Logo avatar */}
+              <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-zinc-700 flex-shrink-0 overflow-hidden flex items-center justify-center text-lg font-bold text-orange-400">
+                {(r as Restaurant & { logo_url?: string | null }).logo_url
+                  ? <img src={(r as Restaurant & { logo_url?: string | null }).logo_url!} alt="" className="w-full h-full object-cover" />
+                  : r.name[0]?.toUpperCase()
+                }
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium truncate">{r.name}</div>
+                <div className="text-xs text-zinc-500">
+                  /{r.slug}
+                  {r.cuisine_type && ` · ${r.cuisine_type}`}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <span className={`text-xs px-2 py-0.5 rounded-full ${r.is_active ? 'bg-green-500/20 text-green-400' : 'bg-zinc-700 text-zinc-400'}`}>
                   {r.is_active ? 'Active' : 'Inactive'}
                 </span>
-                <button onClick={() => handleDelete(r.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors">Delete</button>
+                <button onClick={() => handleDelete(r.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors px-2 py-1">
+                  Delete
+                </button>
               </div>
             </div>
           ))}
@@ -551,12 +572,15 @@ function SubscriptionsTab() {
 
 // ─── Shared components ────────────────────────────────────────────────────────
 
-function SectionLayout({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+function SectionLayout({ title, description, children, action }: { title: string; description: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-xl font-bold">{title}</h2>
-        <p className="text-sm text-zinc-400 mt-0.5">{description}</p>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold">{title}</h2>
+          <p className="text-sm text-zinc-400 mt-0.5">{description}</p>
+        </div>
+        {action && <div>{action}</div>}
       </div>
       {children}
     </div>
