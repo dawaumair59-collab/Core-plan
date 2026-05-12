@@ -12,7 +12,7 @@ import type { Restaurant, MenuCategory, MenuItem, Video } from '../types/databas
 
 type Tab = 'restaurants' | 'menu' | 'videos' | 'analytics' | 'subscriptions'
 
-export default function Dashboard({ onNewRestaurant }: { onNewRestaurant?: () => void }) {
+export default function Dashboard({ onNewRestaurant, onViewMenu }: { onNewRestaurant?: () => void; onViewMenu?: (slug: string) => void }) {
   const [tab, setTab] = useState<Tab>('restaurants')
   const [connected, setConnected] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -78,7 +78,7 @@ export default function Dashboard({ onNewRestaurant }: { onNewRestaurant?: () =>
       </div>
 
       {/* Tab content */}
-      {tab === 'restaurants' && <RestaurantsTab onNewRestaurant={onNewRestaurant} />}
+      {tab === 'restaurants' && <RestaurantsTab onNewRestaurant={onNewRestaurant} onViewMenu={onViewMenu} />}
       {tab === 'menu' && <MenuTab />}
       {tab === 'videos' && <VideosTab />}
       {tab === 'analytics' && <AnalyticsTab />}
@@ -89,7 +89,7 @@ export default function Dashboard({ onNewRestaurant }: { onNewRestaurant?: () =>
 
 // ─── Restaurants Tab ─────────────────────────────────────────────────────────
 
-function RestaurantsTab({ onNewRestaurant }: { onNewRestaurant?: () => void }) {
+function RestaurantsTab({ onNewRestaurant, onViewMenu }: { onNewRestaurant?: () => void; onViewMenu?: (slug: string) => void }) {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', slug: '', cuisine_type: '' })
@@ -183,6 +183,14 @@ function RestaurantsTab({ onNewRestaurant }: { onNewRestaurant?: () => void }) {
                 <span className={`text-xs px-2 py-0.5 rounded-full ${r.is_active ? 'bg-green-500/20 text-green-400' : 'bg-zinc-700 text-zinc-400'}`}>
                   {r.is_active ? 'Active' : 'Inactive'}
                 </span>
+                {onViewMenu && (
+                  <button
+                    onClick={() => onViewMenu(r.slug)}
+                    className="text-xs px-2 py-1 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors border border-orange-500/30"
+                  >
+                    View Menu →
+                  </button>
+                )}
                 <button onClick={() => handleDelete(r.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors px-2 py-1">
                   Delete
                 </button>

@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import type {
+  Database,
   Restaurant,
   MenuCategory,
   MenuItem,
@@ -8,7 +9,7 @@ import type {
   Subscription,
 } from '../types/database'
 
-// ─── Restaurants ────────────────────────────────────────────────────────────
+// ─── Restaurants ─────────────────────────────────────────────────────────────
 
 export async function getRestaurants(): Promise<Restaurant[]> {
   const { data, error } = await supabase
@@ -16,7 +17,7 @@ export async function getRestaurants(): Promise<Restaurant[]> {
     .select('*')
     .order('created_at', { ascending: false })
   if (error) throw error
-  return data
+  return data as Restaurant[]
 }
 
 export async function getRestaurantById(id: string): Promise<Restaurant | null> {
@@ -26,7 +27,7 @@ export async function getRestaurantById(id: string): Promise<Restaurant | null> 
     .eq('id', id)
     .single()
   if (error) throw error
-  return data
+  return data as Restaurant
 }
 
 export async function createRestaurant(
@@ -34,11 +35,11 @@ export async function createRestaurant(
 ): Promise<Restaurant> {
   const { data, error } = await supabase
     .from('restaurants')
-    .insert(payload)
+    .insert(payload as never)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as Restaurant
 }
 
 export async function updateRestaurant(
@@ -47,12 +48,12 @@ export async function updateRestaurant(
 ): Promise<Restaurant> {
   const { data, error } = await supabase
     .from('restaurants')
-    .update({ ...payload, updated_at: new Date().toISOString() })
+    .update({ ...payload, updated_at: new Date().toISOString() } as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as Restaurant
 }
 
 export async function deleteRestaurant(id: string): Promise<void> {
@@ -69,7 +70,7 @@ export async function getMenuCategories(restaurantId: string): Promise<MenuCateg
     .eq('restaurant_id', restaurantId)
     .order('display_order', { ascending: true })
   if (error) throw error
-  return data
+  return data as MenuCategory[]
 }
 
 export async function createMenuCategory(
@@ -77,11 +78,11 @@ export async function createMenuCategory(
 ): Promise<MenuCategory> {
   const { data, error } = await supabase
     .from('menu_categories')
-    .insert(payload)
+    .insert(payload as never)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as MenuCategory
 }
 
 export async function updateMenuCategory(
@@ -90,12 +91,12 @@ export async function updateMenuCategory(
 ): Promise<MenuCategory> {
   const { data, error } = await supabase
     .from('menu_categories')
-    .update({ ...payload, updated_at: new Date().toISOString() })
+    .update({ ...payload, updated_at: new Date().toISOString() } as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as MenuCategory
 }
 
 export async function deleteMenuCategory(id: string): Promise<void> {
@@ -103,7 +104,7 @@ export async function deleteMenuCategory(id: string): Promise<void> {
   if (error) throw error
 }
 
-// ─── Menu Items ──────────────────────────────────────────────────────────────
+// ─── Menu Items ───────────────────────────────────────────────────────────────
 
 export async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
   const { data, error } = await supabase
@@ -112,7 +113,7 @@ export async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
     .eq('restaurant_id', restaurantId)
     .order('display_order', { ascending: true })
   if (error) throw error
-  return data
+  return data as MenuItem[]
 }
 
 export async function getMenuItemsByCategory(categoryId: string): Promise<MenuItem[]> {
@@ -122,7 +123,7 @@ export async function getMenuItemsByCategory(categoryId: string): Promise<MenuIt
     .eq('category_id', categoryId)
     .order('display_order', { ascending: true })
   if (error) throw error
-  return data
+  return data as MenuItem[]
 }
 
 export async function createMenuItem(
@@ -130,11 +131,11 @@ export async function createMenuItem(
 ): Promise<MenuItem> {
   const { data, error } = await supabase
     .from('menu_items')
-    .insert(payload)
+    .insert(payload as never)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as MenuItem
 }
 
 export async function updateMenuItem(
@@ -143,12 +144,12 @@ export async function updateMenuItem(
 ): Promise<MenuItem> {
   const { data, error } = await supabase
     .from('menu_items')
-    .update({ ...payload, updated_at: new Date().toISOString() })
+    .update({ ...payload, updated_at: new Date().toISOString() } as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as MenuItem
 }
 
 export async function deleteMenuItem(id: string): Promise<void> {
@@ -156,7 +157,7 @@ export async function deleteMenuItem(id: string): Promise<void> {
   if (error) throw error
 }
 
-// ─── Videos ─────────────────────────────────────────────────────────────────
+// ─── Videos ──────────────────────────────────────────────────────────────────
 
 export async function getVideos(restaurantId: string): Promise<Video[]> {
   const { data, error } = await supabase
@@ -165,7 +166,7 @@ export async function getVideos(restaurantId: string): Promise<Video[]> {
     .eq('restaurant_id', restaurantId)
     .order('created_at', { ascending: false })
   if (error) throw error
-  return data
+  return data as Video[]
 }
 
 export async function getVideosByMenuItem(menuItemId: string): Promise<Video[]> {
@@ -175,7 +176,7 @@ export async function getVideosByMenuItem(menuItemId: string): Promise<Video[]> 
     .eq('menu_item_id', menuItemId)
     .order('created_at', { ascending: false })
   if (error) throw error
-  return data
+  return data as Video[]
 }
 
 export async function createVideo(
@@ -183,11 +184,11 @@ export async function createVideo(
 ): Promise<Video> {
   const { data, error } = await supabase
     .from('videos')
-    .insert(payload)
+    .insert(payload as never)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as Video
 }
 
 export async function updateVideo(
@@ -196,12 +197,12 @@ export async function updateVideo(
 ): Promise<Video> {
   const { data, error } = await supabase
     .from('videos')
-    .update({ ...payload, updated_at: new Date().toISOString() })
+    .update({ ...payload, updated_at: new Date().toISOString() } as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as Video
 }
 
 export async function deleteVideo(id: string): Promise<void> {
@@ -214,7 +215,7 @@ export async function deleteVideo(id: string): Promise<void> {
 export async function trackEvent(
   payload: Database['public']['Tables']['analytics']['Insert']
 ): Promise<void> {
-  const { error } = await supabase.from('analytics').insert(payload)
+  const { error } = await supabase.from('analytics').insert(payload as never)
   if (error) console.error('Analytics tracking failed:', error)
 }
 
@@ -234,10 +235,10 @@ export async function getAnalytics(
 
   const { data, error } = await query
   if (error) throw error
-  return data
+  return data as AnalyticsEvent[]
 }
 
-export async function getAnalyticsSummary(restaurantId: string) {
+export async function getAnalyticsSummary(restaurantId: string): Promise<Record<string, number>> {
   const { data, error } = await supabase
     .from('analytics')
     .select('event_type')
@@ -246,7 +247,7 @@ export async function getAnalyticsSummary(restaurantId: string) {
   if (error) throw error
 
   const summary: Record<string, number> = {}
-  for (const row of data) {
+  for (const row of (data as { event_type: string }[])) {
     summary[row.event_type] = (summary[row.event_type] || 0) + 1
   }
   return summary
@@ -261,7 +262,7 @@ export async function getSubscription(restaurantId: string): Promise<Subscriptio
     .eq('restaurant_id', restaurantId)
     .single()
   if (error && error.code !== 'PGRST116') throw error
-  return data
+  return data as Subscription | null
 }
 
 export async function createSubscription(
@@ -269,11 +270,11 @@ export async function createSubscription(
 ): Promise<Subscription> {
   const { data, error } = await supabase
     .from('subscriptions')
-    .insert(payload)
+    .insert(payload as never)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as Subscription
 }
 
 export async function updateSubscription(
@@ -282,11 +283,10 @@ export async function updateSubscription(
 ): Promise<Subscription> {
   const { data, error } = await supabase
     .from('subscriptions')
-    .update({ ...payload, updated_at: new Date().toISOString() })
+    .update({ ...payload, updated_at: new Date().toISOString() } as never)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data
+  return data as Subscription
 }
-
