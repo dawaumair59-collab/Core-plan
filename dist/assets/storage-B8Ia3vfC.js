@@ -1,0 +1,1 @@
+import{t as e}from"./supabase-BOFYMEKu.js";var t=`restaurant-assets`;async function n(n,r,i){let a=n.name.split(`.`).pop()?.toLowerCase()??`jpg`,o=`${r}/${i}-${Date.now()}.${a}`,{error:s}=await e.storage.from(t).upload(o,n,{upsert:!0,contentType:n.type});if(s)throw s;let{data:c}=e.storage.from(t).getPublicUrl(o);return{url:c.publicUrl,path:o}}export{n as t};

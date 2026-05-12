@@ -8,6 +8,7 @@ import {
   getAnalyticsSummary, trackEvent,
   getSubscription, createSubscription,
 } from '../lib/api'
+import QRModal from '../components/QRModal'
 import type { Restaurant, MenuCategory, MenuItem, Video } from '../types/database'
 
 type Tab = 'restaurants' | 'menu' | 'videos' | 'analytics' | 'subscriptions'
@@ -95,6 +96,7 @@ function RestaurantsTab({ onNewRestaurant, onViewMenu }: { onNewRestaurant?: () 
   const [form, setForm] = useState({ name: '', slug: '', cuisine_type: '' })
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [qrTarget, setQrTarget] = useState<{ name: string; slug: string } | null>(null)
 
   const load = useCallback(async () => {
     try {
@@ -183,21 +185,36 @@ function RestaurantsTab({ onNewRestaurant, onViewMenu }: { onNewRestaurant?: () 
                 <span className={`text-xs px-2 py-0.5 rounded-full ${r.is_active ? 'bg-green-500/20 text-green-400' : 'bg-zinc-700 text-zinc-400'}`}>
                   {r.is_active ? 'Active' : 'Inactive'}
                 </span>
+                <button
+                  onClick={() => setQrTarget({ name: r.name, slug: r.slug })}
+                  className="text-xs px-2 py-1 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors border border-zinc-700"
+                  title="Generate QR Code"
+                >
+                  📱 QR
+                </button>
                 {onViewMenu && (
                   <button
                     onClick={() => onViewMenu(r.slug)}
                     className="text-xs px-2 py-1 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors border border-orange-500/30"
                   >
-                    View Menu →
+                    Menu →
                   </button>
                 )}
                 <button onClick={() => handleDelete(r.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors px-2 py-1">
-                  Delete
+                  Del
                 </button>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {qrTarget && (
+        <QRModal
+          restaurantName={qrTarget.name}
+          slug={qrTarget.slug}
+          onClose={() => setQrTarget(null)}
+        />
       )}
     </SectionLayout>
   )

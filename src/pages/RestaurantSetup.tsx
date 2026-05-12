@@ -25,9 +25,10 @@ interface FormState {
 
 interface Props {
   onComplete: (restaurant: Restaurant) => void
+  onBack?: () => void
 }
 
-export default function RestaurantSetup({ onComplete }: Props) {
+export default function RestaurantSetup({ onComplete, onBack }: Props) {
   const [step, setStep] = useState<Step>(1)
   const [form, setForm] = useState<FormState>({
     name: '',
